@@ -1,0 +1,23 @@
+go.mod
+  s_0f2ea240ccb6a2::t_139973a35431a9 65,67-68,70-73,75
+pkg/dbmate/version.go
+  s_0f2ea240ccb6a2::t_4abeb02e5f1439 4
+go.sum
+  s_0f2ea240ccb6a2::t_7c8ab6bc8d4e57 493-494,533-534,582-583,625-626,691-694,707-708,766-767
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d8662c34b3c5071beb5c35ab1e6336a89e2cd078",
+  "prompts": {},
+  "sessions": {
+    "s_0f2ea240ccb6a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e40d745-d122-4f24-958e-1593172905fd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jyothsna Mallavarapu <jyothsna@drumwave-cont.com>"
+    }
+  }
+}
