@@ -16,6 +16,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -63,8 +65,10 @@ jobs:
     runs-on: ${{ matrix.image }}
     env: ${{ matrix.env }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-go@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
       - name: Setup environment
@@ -75,7 +79,7 @@ jobs:
           GOARCH: ${{ matrix.arch }}
           OUTPUT: dbmate-${{ matrix.os }}-${{ matrix.arch }}
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: dbmate-${{ matrix.os }}-${{ matrix.arch }}
           path: dist/dbmate-*
@@ -88,16 +92,18 @@ jobs:
       id-token: write # AWS OIDC
       contents: read
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - run: corepack enable
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: typescript/package-lock.json
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           path: dist
 
@@ -126,6 +132,30 @@ jobs:
             --domain-owner 127266044500 \
             --repository common-library-npm \
             --region us-east-1
+
+      # CodeArtifact's origin-control feature blocks direct publish of any
+      # package name the repository has ever fetched from its npm upstream,
+      # by default (anti dependency-confusion protection) -- dbmate and
+      # @dbmate/<platform> are proxied from npmjs.org today (see
+      # marketplace.monorepo's package-lock.json), so without this the
+      # publish step below fails with a CodeArtifact-side rejection, not an
+      # npm error. Requires codeartifact:PutPackageOriginConfiguration on the
+      # assumed role -- reddrummer-github-actions-runner may not have it yet;
+      # if this step fails with AccessDenied, an admin needs to grant it or
+      # run the equivalent command by hand once.
+      - name: Allow direct publish for dbmate packages in CodeArtifact
+        working-directory: typescript
+        run: |
+          for pkg_dir in dist/dbmate dist/@dbmate/*; do
+            name=$(node -p "require('./$pkg_dir/package.json').name")
+            aws codeartifact put-package-origin-configuration \
+              --domain drumwave-prod \
+              --domain-owner 127266044500 \
+              --repository common-library-npm \
+              --format npm \
+              --package "$name" \
+              --restrictions publish=ALLOW,upstream=ALLOW
+          done
 
       # publish.ts hardcodes --provenance (npm's OIDC trusted-publish flow,
       # npmjs.org-only) and no --registry (implicit npmjs.org default) -- both
