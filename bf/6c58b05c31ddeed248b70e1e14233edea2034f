@@ -1,0 +1,24 @@
+.github/workflows/publish-codeartifact.yml
+  s_0f2ea240ccb6a2::t_3629c9c86008b5 68,71,82
+  s_0f2ea240ccb6a2::t_7db005f72cfca1 95,100,106
+  s_0f2ea240ccb6a2::t_bc81fec081ba0d 136-159
+  s_0f2ea240ccb6a2::t_493253d5052fc0 19-20
+  s_0f2ea240ccb6a2::t_d44251cbfd9738 69-70
+  s_0f2ea240ccb6a2::t_3b0c6bc5f5b606 96-97
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bf6c58b05c31ddeed248b70e1e14233edea2034f",
+  "prompts": {},
+  "sessions": {
+    "s_0f2ea240ccb6a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e40d745-d122-4f24-958e-1593172905fd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jyothsna Mallavarapu <jyothsna@drumwave-cont.com>"
+    }
+  }
+}
