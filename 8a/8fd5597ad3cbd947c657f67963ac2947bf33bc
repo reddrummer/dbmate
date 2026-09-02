@@ -1,0 +1,19 @@
+.github/workflows/ci.yml
+  s_0f2ea240ccb6a2::t_9c3044392d53f3 219-226
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "8a8fd5597ad3cbd947c657f67963ac2947bf33bc",
+  "prompts": {},
+  "sessions": {
+    "s_0f2ea240ccb6a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e40d745-d122-4f24-958e-1593172905fd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jyothsna Mallavarapu <jyothsna@drumwave-cont.com>"
+    }
+  }
+}
