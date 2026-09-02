@@ -127,6 +127,16 @@ jobs:
       # Confirmed with the SRE team directly: the role's trust policy already
       # accepts any reddrummer/* repo (org-wide wildcard subject) and it has
       # AWSCodeArtifactAdminAccess attached, so no IAM changes were needed here.
+      #
+      # Known tradeoff, accepted for now (see PR #1 review): this is a shared,
+      # org-wide-trusted role with admin-level CodeArtifact access, so any
+      # reddrummer/* repo's CI can already modify anything in common-library-npm,
+      # not just this repo's packages. marketplace.monorepo's sdk-publish.yaml
+      # depends on this same shared role, so narrowing its trust to just
+      # reddrummer/dbmate isn't an option here -- a properly-scoped fix would
+      # mean giving dbmate its own dedicated OIDC role instead (the per-repo
+      # actions-role pattern offers-service/pricing-service/dw-notify already
+      # use), which is a separate Terraform PR against sre.infrastructure.
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
