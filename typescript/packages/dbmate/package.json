@@ -1,5 +1,5 @@
 {
-  "name": "dbmate",
+  "name": "@drumwave/dbmate",
   "version": "",
   "description": "A lightweight, framework-agnostic database migration tool",
   "repository": {

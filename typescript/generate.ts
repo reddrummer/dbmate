@@ -100,8 +100,8 @@ async function main() {
       throw new Error(`Unknown arch ${build.arch}`);
     }
 
-    const name = `@dbmate/${jsOS}-${jsArch}`;
-    const targetDir = `dist/@dbmate/${jsOS}-${jsArch}`;
+    const name = `@drumwave/dbmate-${jsOS}-${jsArch}`;
+    const targetDir = `dist/@drumwave/dbmate-${jsOS}-${jsArch}`;
     const binext = jsOS === "win32" ? ".exe" : "";
     const templateVars = { jsOS, jsArch, name, version };
 
@@ -137,19 +137,19 @@ async function main() {
   }
 
   // copy main package
-  await cp("packages/dbmate", "dist/dbmate", {
+  await cp("packages/dbmate", "dist/@drumwave/dbmate", {
     recursive: true,
   });
 
   // write package.json
   await writeFile(
-    "dist/dbmate/package.json",
+    "dist/@drumwave/dbmate/package.json",
     JSON.stringify(mainPackageJson, undefined, 2),
   );
 
   // copy readme and license
-  await cp("../LICENSE", "dist/dbmate/LICENSE");
-  await cp("../README.md", "dist/dbmate/README.md");
+  await cp("../LICENSE", "dist/@drumwave/dbmate/LICENSE");
+  await cp("../README.md", "dist/@drumwave/dbmate/README.md");
 }
 
 main().catch((e: unknown) => {

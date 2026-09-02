@@ -186,7 +186,6 @@ jobs:
     needs: build
     permissions:
       contents: read
-      id-token: write
 
     steps:
       - uses: actions/checkout@v7
@@ -217,6 +216,11 @@ jobs:
       - run: npm test
         working-directory: typescript
 
-      - run: npm run publish
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        working-directory: typescript
+      # Deliberately not running `npm run publish` here (upstream's tag-triggered
+      # public npm release step). This fork never publishes to public npmjs.org
+      # under any name -- internal releases go through publish-codeartifact.yml
+      # instead, to DrumWave's private CodeArtifact registry. Left disabled rather
+      # than adapted to publish.ts's dist/dbmate layout: `generate.ts` now writes
+      # dist/@drumwave/dbmate(-<platform>), so publish.ts's hardcoded dist/dbmate
+      # / dist/@dbmate paths no longer exist, and readdir("dist/@dbmate") would
+      # throw if this step ever ran (e.g. a stray `v*` tag pushed by accident).
