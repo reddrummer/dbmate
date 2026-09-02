@@ -3,12 +3,21 @@
 # login -> npm publish pattern marketplace.monorepo's own sdk-publish.yaml uses
 # for @drumwave/mp-internal-sdk / @drumwave/mp-sdk.
 #
+# Published under the @drumwave scope (@drumwave/dbmate, @drumwave/dbmate-<platform>)
+# rather than the upstream public names (dbmate, @dbmate/<platform>). Publishing
+# under the same names CodeArtifact already proxies from npmjs.org would mean
+# permanently relaxing origin-control on common-library-npm -- a repo shared with
+# every other internal package -- and with upstream still reachable, a real dbmate
+# release could silently take precedence over this patched build later (prerelease
+# versions don't win an ordinary semver range against it). Scoping to @drumwave
+# sidesteps both: the name was never fetched from upstream, so no origin-control
+# change is needed at all.
+#
 # Trigger: manual only, via workflow_dispatch. Kept separate from ci.yml's
 # `v*` tag trigger so this never collides with (or accidentally piggybacks on)
 # the upstream public-npm release flow. Run it after bumping
 # pkg/dbmate/version.go to a version string that doesn't exist upstream, e.g.
-# "2.35.1-drumwave.1" -- CodeArtifact then just adds it as a new version under
-# the existing `dbmate` / `@dbmate/<platform>` names, no precedence questions.
+# "2.35.1-drumwave.1".
 name: Publish to CodeArtifact
 
 on:
@@ -115,9 +124,9 @@ jobs:
         working-directory: typescript
 
       # Same role/domain/repository sdk-publish.yaml uses in marketplace.monorepo.
-      # Confirm this role's trust policy allows this repo's OIDC subject before
-      # relying on this workflow -- that's owned by infrastructure.dw-notify,
-      # not this repo, and isn't something to assume works on the first run.
+      # Confirmed with the SRE team directly: the role's trust policy already
+      # accepts any reddrummer/* repo (org-wide wildcard subject) and it has
+      # AWSCodeArtifactAdminAccess attached, so no IAM changes were needed here.
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
@@ -133,38 +142,18 @@ jobs:
             --repository common-library-npm \
             --region us-east-1
 
-      # CodeArtifact's origin-control feature blocks direct publish of any
-      # package name the repository has ever fetched from its npm upstream,
-      # by default (anti dependency-confusion protection) -- dbmate and
-      # @dbmate/<platform> are proxied from npmjs.org today (see
-      # marketplace.monorepo's package-lock.json), so without this the
-      # publish step below fails with a CodeArtifact-side rejection, not an
-      # npm error. Requires codeartifact:PutPackageOriginConfiguration on the
-      # assumed role -- reddrummer-github-actions-runner may not have it yet;
-      # if this step fails with AccessDenied, an admin needs to grant it or
-      # run the equivalent command by hand once.
-      - name: Allow direct publish for dbmate packages in CodeArtifact
-        working-directory: typescript
-        run: |
-          for pkg_dir in dist/dbmate dist/@dbmate/*; do
-            name=$(node -p "require('./$pkg_dir/package.json').name")
-            aws codeartifact put-package-origin-configuration \
-              --domain drumwave-prod \
-              --domain-owner 127266044500 \
-              --repository common-library-npm \
-              --format npm \
-              --package "$name" \
-              --restrictions publish=ALLOW,upstream=ALLOW
-          done
-
       # publish.ts hardcodes --provenance (npm's OIDC trusted-publish flow,
       # npmjs.org-only) and no --registry (implicit npmjs.org default) -- both
       # wrong for a private registry, so this loop reimplements its two lines
       # of real logic against CodeArtifact instead of calling `npm run publish`.
+      #
+      # No CodeArtifact origin-control step is needed here: these publish as
+      # @drumwave/dbmate and @drumwave/dbmate-<platform>, names never fetched
+      # from npmjs.org, so origin-control never blocks them.
       - name: Publish packages
         working-directory: typescript
         run: |
-          for pkg in dist/dbmate dist/@dbmate/*; do
+          for pkg in dist/@drumwave/dbmate dist/@drumwave/dbmate-*; do
             echo "Publishing $pkg"
             npm publish "$pkg"
           done
