@@ -1,0 +1,32 @@
+typescript/packages/dbmate/package.json
+  s_0f2ea240ccb6a2::t_4eed0e361ff9d5 2
+.github/workflows/publish-codeartifact.yml
+  s_0f2ea240ccb6a2::t_57aad973c032e2 150-152,156
+  s_0f2ea240ccb6a2::t_3211e702234f6c 149
+  s_0f2ea240ccb6a2::t_9de7ec0d2e4712 6-15,20
+  s_0f2ea240ccb6a2::t_61be04f19faf40 127-129
+typescript/generate.ts
+  s_0f2ea240ccb6a2::t_9cadf90e07e281 103
+  s_0f2ea240ccb6a2::t_cb0be0ab7abf04 104
+  s_0f2ea240ccb6a2::t_f4cd788bda3eb8 140,146,151-152
+typescript/package.json
+  s_0f2ea240ccb6a2::t_d299a6c21958e1 9
+typescript/packages/dbmate/src/resolveBinary.ts
+  s_0f2ea240ccb6a2::t_3d2ff5b167e772 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "42ca47b6b56a266dd4f7cebf98648d84d01afee3",
+  "prompts": {},
+  "sessions": {
+    "s_0f2ea240ccb6a2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e40d745-d122-4f24-958e-1593172905fd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jyothsna Mallavarapu <jyothsna@drumwave-cont.com>"
+    }
+  }
+}
